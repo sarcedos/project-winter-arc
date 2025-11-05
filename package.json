@@ -12,10 +12,12 @@
   },
   "license": "ISC",
   "author": "MG",
-  "type": "commonjs",
-  "main": "app.js",
+  "type": "module",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "dist/server.js"
   },
   "dependencies": {
     "@types/express": "^5.0.5",
@@ -23,5 +25,12 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }
