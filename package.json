@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "start": "dist/src/server.js",
-    "clean": "rm -rf dist/src"
+    "clean": "rm -rf dist/*"
   },
   "dependencies": {
     "@types/express": "^5.0.5",
