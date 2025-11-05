@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import pool from '../database/db.js';
+import bcrypt from "bcrypt";
 
 dotenv.config()
 const app = express()
@@ -28,6 +29,43 @@ app.get('/dbhealth', async (req, res) => {
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/pullusers', async (req, res) => {
+  try {
+    const results = await pool.query('SELECT * FROM goaltracker.users');
+    res.status(200).json(results.rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+app.post('/api/adduser', async (req, res) => {
+    
+    try {
+        const { email, username, password} = req.body;
+
+        if (!email || !username || !password) {
+            return res.status(400).json({ error: "Missing required fields"});
+        }
+
+        const password_hash = await bcrypt.hash(password, 10);
+
+        const result = await pool.query(
+            'INSERT INTO goaltracker.users(email, username, password_hash) VALUES ($1, $2, $3) RETURNING *',
+            [email, username, password_hash]
+            );
+    
+        const newUser = result.rows[0];
+        delete newUser.password_hash;
+
+        res.status(200).json(newUser);
+    
+    } catch (error) {
+        console.error('Not letting this guy in cause:', error)
+        res.status(500).json({ error: "no can do chief" });
+    }
 });
 
 app.listen(port, () => {

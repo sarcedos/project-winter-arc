@@ -1,0 +1,15 @@
+### Health check
+GET http://localhost:8008/dbhealth
+
+### Database test
+GET http://localhost:8008/api/pullusers
+
+### Register a user
+POST http://localhost:8008/api/adduser
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "username": "testuser",
+  "password": "password123"
+}
