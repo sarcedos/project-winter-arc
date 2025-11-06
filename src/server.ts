@@ -41,32 +41,6 @@ app.get('/api/pullusers', async (req, res) => {
   }
 });
 
-app.get('/api/getgoals', (req,res) => {
-    const { userid } = res.body
-    try {
-        if (!userid) {
-            res.response(404).json({error: "User not found"})
-        }
-
-        const result = await pool.query(
-            "SELECT id, userid, title, description, status FROM goaltracker.goals WHERE userid = $1",
-            [userid]
-        )
-        if (result.rows.length === 0) {
-            res.response(404).json({error: "No goals ere M'lord"})
-        } else {
-            res.response(200).json(result);
-        }
-    } catch {
-        res.response(500).json({message: "No idea bruv, is busted"})
-    }
-
-})
-
-app.get('/api/gettasks', (req, res) => {
-    ;
-});
-
 app.post('/api/adduser', async (req, res) => {
     
     try {
@@ -93,15 +67,6 @@ app.post('/api/adduser', async (req, res) => {
         res.status(500).json({ error: "no can do chief" });
     }
 });
-
-app.post('/api/addtask', (req, res) =>{
-    console.log("you've found add task!");
-})
-
-app.post('/api/addgoal', (req, res) => {
-    console.log("you've hit add goal!");
-})
-
 
 //pausing on this for now
 app.post('/api/login', async (req, res) => {
