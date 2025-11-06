@@ -68,6 +68,39 @@ app.post('/api/adduser', async (req, res) => {
     }
 });
 
+//pausing on this for now
+app.post('/api/login', async (req, res) => {
+    const {username, password} = req.body
+
+    if (!username || !password) {
+        return res.status(400).json({message: "you forgettin something?"})
+    }
+
+    try {
+        const result = await pool.query(
+            'SELECT id, email, username, password_hash FROM goaltracker.users WHERE username = $1',
+            [username]
+        )
+
+        if (result.rows.length == 0) {
+            return res.status(401).json({error: "invalid credentials"});
+        }
+
+        const user = result.rows[0];
+        
+        const isValid = await bcrypt.compare(password, user.password_hash);
+        
+        if (isValid) {
+            delete user.password_hash;
+            res.status(200).json({message: 'login successful', user:user});
+        } else {
+            res.status(401).json({error: 'not on the list"'})
+        }             
+    } catch {
+        res.status(500).json({ answer: "login failure"});
+    }
+});
+
 app.listen(port, () => {
     console.log(`Winter Arc is Go on ${port}`);
 });

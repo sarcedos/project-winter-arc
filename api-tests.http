@@ -13,3 +13,11 @@ Content-Type: application/json
   "username": "testuser",
   "password": "password123"
 }
+### Check login
+POST http://localhost:8008/api/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
