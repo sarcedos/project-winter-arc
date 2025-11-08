@@ -9,12 +9,12 @@ POST http://localhost:8008/api/adduser
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "username": "testuser",
-  "password": "password123"
+  "email": "testomundo@example.com",
+  "username": "testomundo",
+  "password": "password1337"
 }
 ### Check login
-POST http://localhost:8008/api/login
+sPOST http://localhost:8008/api/login
 Content-Type: application/json
 
 {

@@ -16,6 +16,6 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "database/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "database/**/*","client/src/**/*"],
+  "exclude": ["server/node_modules", "dist"]
 }

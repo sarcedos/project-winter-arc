@@ -13,10 +13,10 @@
   "license": "ISC",
   "author": "MG",
   "type": "module",
-  "main": "dist/server.js",
+  "main": "../dist/server.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/src/server.js",
+    "build": "../tsc",
+    "start": "node ../dist/src/server.js",
     "clean": "rm -rf dist/*"
   },
   "dependencies": {
