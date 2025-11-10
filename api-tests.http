@@ -14,7 +14,7 @@ Content-Type: application/json
   "password": "password1337"
 }
 ### Check login
-sPOST http://localhost:8008/api/login
+POST http://localhost:8008/api/login
 Content-Type: application/json
 
 {

@@ -37,11 +37,11 @@ app.get('/api/pullusers', async (req, res) => {
   }
 });
 
-app.get('/api/getgoals', (req,res) => {
-    const { userid } = res.body
+app.get('/api/getgoals', async (req,res) => {
+    const { userid } = req.body
     try {
         if (!userid) {
-            res.response(404).json({error: "User not found"})
+            res.status(404).json({error: "User not found"})
         }
 
         const result = await pool.query(
@@ -49,16 +49,16 @@ app.get('/api/getgoals', (req,res) => {
             [userid]
         )
         if (result.rows.length === 0) {
-            res.response(404).json({error: "No goals ere M'lord"})
+            res.status(404).json({error: "No goals ere M'lord"})
         } else {
-            res.response(200).json(result);
+            res.status(200).json(result);
         }
     } catch {
-        res.response(500).json({message: "No idea bruv, is busted"})
+        res.status(500).json({message: "No idea bruv, is busted"})
     }
 });
 
-app.get('/api/gettask', (req, res) => {
+app.get('/api/gettask', async (req, res) => {
     console.log("You discovered task getter!");
 })
 
@@ -89,11 +89,11 @@ app.post('/api/adduser', async (req, res) => {
     }
 });
 
-app.post('/api/addtask', (req, res) =>{
+app.post('/api/addtask', async (req, res) =>{
     console.log("you've found add task!");
 });
 
-app.post('/api/addgoal', (req, res) => {
+app.post('/api/addgoal', async (req, res) => {
     console.log("you've hit add goal!");
 });
 
