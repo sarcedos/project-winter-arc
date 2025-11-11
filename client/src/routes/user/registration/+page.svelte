@@ -54,7 +54,9 @@
 
 <main>
     <div class="container">
+        {#if !success}
         <h1>Will you face the summit?</h1>
+        {/if}
 
         {#if success}
             <div>
