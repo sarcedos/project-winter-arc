@@ -8,7 +8,7 @@ const app = express()
 const port = process.env.PORT || 8008; 
 app.use(express.json());
 
-app.get('/dbhealth', async (req, res) => {
+app.get('api/dbhealth', async (req, res) => {
     try {
         const result = await pool.query('SELECT NOW()');
         res.json({
@@ -23,7 +23,7 @@ app.get('/dbhealth', async (req, res) => {
     }
 });
 
-app.get('/health', (req, res) => {
+app.get('api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
@@ -58,8 +58,28 @@ app.get('/api/getgoals', async (req,res) => {
     }
 });
 
-app.get('/api/gettask', async (req, res) => {
-    console.log("You discovered task getter!");
+app.get('/api/gettasks', async (req, res) => {
+    try {
+        const { goalid } = req.body;
+        
+        if (!goalid) {
+            res.status(404).json({error: "Goal not found"})
+        }
+
+        const result = await pool.query(
+        "SELECT id, title, description, due_date FROM goaltracker.tasks WHERE goalid = $1",
+        [goalid]
+        );
+
+        if (result.rows.length === 0){
+            res.status(404).json({error: "No tasks ere M'lord"})
+        } else {
+        res.status(200).json(result)
+        }
+
+    } catch {
+        res.status(500).json({message: "issue with request"});
+    }
 })
 
 app.post('/api/adduser', async (req, res) => {
@@ -90,11 +110,48 @@ app.post('/api/adduser', async (req, res) => {
 });
 
 app.post('/api/addtask', async (req, res) =>{
-    console.log("you've found add task!");
+    try {
+        const { userid, title, description} = req.body
+
+        if (!userid || !title || !description) {
+            res.status(500).json(error: "Missing required fields")
+        }
+
+        const result = await pool.query(
+            "INSERT INTO goaltracker.goals (userid, title, description) VALUES ($1 ,$2, $3) RETURING *",
+            [userid, title, description]
+        );
+
+        const newGoal = result.rows[0];
+
+        res.status(200).json(newGoal);
+
+    } catch (error) {
+        console.error('It appears the scribes were asleep:', error)
+        res.status(500).json({ error: "caught the scribes napping"})
+    }
 });
 
 app.post('/api/addgoal', async (req, res) => {
-    console.log("you've hit add goal!");
+    const { goalid, title, description, due_date } = req.body;
+
+    try {
+        if (!goalid || !title || !description || !due_date) {
+            res.status(500).json({error: "missing required fields"})
+        }
+
+        const result = await pool.query(
+            "INSERT INTO goaltracker.tasks (goalid, title, description, due_date) VALUES ($1, $2, $3, $4) RETURNING *",
+            [goalid, title, description, due_date]
+        )
+
+        const newTask = result.rows[0];
+        res.status(200).json(newTask);
+
+    } catch (error) {
+        console.error("Error has occured: ", error)
+        res.status(500).json({ error: "Caught the scribes sleeeping" })
+    }
 });
 
 //pausing on this for now

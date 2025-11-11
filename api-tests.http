@@ -21,3 +21,20 @@ Content-Type: application/json
   "username": "testuser",
   "password": "password123"
 }
+
+POST http://localhost:8008/api/addtask
+Content-Type: application/json
+{
+  "goalid": 1,
+  "title": "the testing of the server",
+  "description": "And lo! did the programmer test the server",
+  "due_date": "2026-01-01 12:00:00"
+}
+
+POST http://localhost:8008/api/addgoal
+Content-Type: application/json
+{
+  "userid": 1,
+  "title": "this is a test",
+  "description": "this is a test of the mundo!"
+}
