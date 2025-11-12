@@ -4,8 +4,11 @@ GET http://localhost:8008/dbhealth
 ### Database test
 GET http://localhost:8008/api/pullusers
 
+### Get all tasks with goalid = 1
+GET http
+
 ### Register a user
-POST http://localhost:8008/api/adduser
+POST http://localhost:8008/api/users/adduser
 Content-Type: application/json
 
 {
@@ -22,8 +25,10 @@ Content-Type: application/json
   "password": "password123"
 }
 
-POST http://localhost:8008/api/addtask
+### Add a new task to a goal
+POST http://localhost:8008/api/tasks/addtask
 Content-Type: application/json
+
 {
   "goalid": 1,
   "title": "the testing of the server",
@@ -31,6 +36,7 @@ Content-Type: application/json
   "due_date": "2026-01-01 12:00:00"
 }
 
+### Add a new goal
 POST http://localhost:8008/api/addgoal
 Content-Type: application/json
 {
@@ -38,3 +44,4 @@ Content-Type: application/json
   "title": "this is a test",
   "description": "this is a test of the mundo!"
 }
+
