@@ -29,9 +29,6 @@ app.get('api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-//might repurpose this one for a scoreboard want to modify for more complex queries for boards
-
-
 
 //USER MANAGEMENT APIs
 app.post('/api/login', async (req, res) => {
@@ -102,17 +99,18 @@ app.get('/api/users/pullusers', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
+
 //GOAL INTERACT APIs
 app.get('/api/goals/getgoals/:user_id', async (req,res) => {
     try {
         const { user_id } = req.params;
 
         if (!user_id) {    
-            res.status(400).json({error: "Must provide a username"});
+            res.status(400).json({error: "Must provide a user ID"});
         }
 
         const result = await pool.query(
-            "SELECT id, userid, title, description, status FROM goaltracker.goals WHERE userid = $1 RETURNING *",
+            "SELECT id, user_id, title, description, status FROM goaltracker.goals WHERE user_id = $1",
             [user_id]
         )
         if (result.rows.length === 0) {
@@ -126,7 +124,7 @@ app.get('/api/goals/getgoals/:user_id', async (req,res) => {
     }
 });
 
-app.post('/api/goals/addgoal', async (req, res) =>{
+app.post('/api/goals/addgoal', async (req, res) => {
     try {
         const { user_id, title, description} = req.body
 
@@ -149,6 +147,10 @@ app.post('/api/goals/addgoal', async (req, res) =>{
     }
 });
 
+app.get('/api/goals/goalq', async (req, res) => {
+    console.log("added as placeholder")
+})
+
 
 //TASK INTERACT APIs
 app.get('/api/tasks/gettasks/:goal_id', async (req, res) => {
@@ -160,7 +162,7 @@ app.get('/api/tasks/gettasks/:goal_id', async (req, res) => {
         }
 
         const result = await pool.query(
-        "SELECT id, title, description, due_date FROM goaltracker.tasks WHERE goalid = $1",
+        "SELECT id, title, description, due_date FROM goaltracker.tasks WHERE goal_id = $1",
         [goal_id]
         );
 
