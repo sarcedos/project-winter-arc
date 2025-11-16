@@ -1,0 +1,92 @@
+<script lang="ts">
+    import { page } from '$app/stores';
+    import { onMount } from "svelte";
+
+    $: goal_id = $page.params.goal_id;
+
+    let goal: any = null;
+    let tasks: any[] = [];
+    let loading = true;
+    let error = "";
+
+    onMount(async () => {
+        await loadGoalTasks();
+    });
+
+    async function loadGoalTasks () {
+        loading = true;
+        try {
+            const goalResponse = await fetch(`/api/goals/getgoals/${goal_id}`);
+            if (!goalResponse.ok) {
+                error = "Goal not found";
+                throw new Error('Goal Not Found');
+                
+            }
+            goal = await goalResponse.json();
+
+            const taskResponse = await fetch(`/api/tasks/gettasks/${goal_id}`);
+            if (!taskResponse.ok) {
+              error = "tasks could not be loaded";
+              throw new Error('Tasks could not be loaded')
+            }
+            tasks = await taskResponse.json();            
+
+        } catch (err) {
+            error = "We fudged it"
+            console.error(err);
+
+        } finally {
+            loading = false;
+        }
+    }
+
+</script>
+
+
+{#if loading}
+<div class="loading">Contacting the scribes...</div>
+{:else if error}
+<div class="error">Issue contacting the Scribes: {error}</div >
+<a href="/user/dashboard">Return to Dashboard?</a>
+{:else if goal}
+    <main>
+        <div>
+            <a href="/user/dashboard">Back to Dashboard?</a>
+            <h1 class="header"> Goalpost: { goal.title } </h1>
+            {#if goal.description}
+                <p class="description"> {goal.description}</p>
+            {/if}
+            <span class="goal-status">{goal.status}</span>
+        </div>
+
+        <section class="tasks">
+            <h2> Tasks </h2>
+            {#if tasks.length === 0}
+                <p>This goal has no path, add the first step!</p>
+            {:else}
+                <ul>
+                    {#each tasks as task}
+                    <li class:completed={task.completed}>
+                        <input
+                            type="checkbox"
+                            checked={task.completed}
+                            on:change={()=> toggleTaskComplete(task.id, task.completed)}
+                        />
+                        <div class="task-info">
+                            <span class="task-title">{task.title}</span>
+                            {#if task.due_date}
+                            <span class="due-date">Due: {new Date(task.due_date).toLocaleDateString()}</span>
+                            {/if}
+                            {#if task.points}
+                            <span class="task-points">{task.points} pts</span>
+                            {/if}             
+                        </div>
+                    </li>
+                    {/each}
+                </ul>
+            {/if}
+            <button class="add-task">+ Add Task</button>
+        </section>
+    </main>
+{/if} 
+    

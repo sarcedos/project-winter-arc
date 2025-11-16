@@ -49,3 +49,9 @@ GET http://localhost:8008/api/goals/getgoals/1
 
 ### Pull all tasks for GoalID1
 GET http://localhost:8008/api/tasks/gettasks/1
+
+### SWITCH TESTER CASE 1
+GET http://localhost:8008/api/tasks/gettasks
+
+### CASE 2
+GET http://localhost:8008/api/tasks/gettasks?switchOn=on

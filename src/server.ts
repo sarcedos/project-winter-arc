@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import pool from '../database/db.js';
 import bcrypt from "bcrypt";
+import cron from 'node-cron';
 
 dotenv.config()
 const app = express()
@@ -114,7 +115,7 @@ app.get('/api/goals/getgoals/:user_id', async (req,res) => {
             [user_id]
         )
         if (result.rows.length === 0) {
-            res.status(404).json({error: "No goals ere M'lord"})
+            res.status(400).json({error: "No goals ere M'lord"})
         } else {
             const goals = result.rows;
             res.status(200).json(goals);
@@ -147,9 +148,30 @@ app.post('/api/goals/addgoal', async (req, res) => {
     }
 });
 
-app.get('/api/goals/goalq', async (req, res) => {
-    console.log("added as placeholder")
-})
+app.get('/api/goals/getgoal/:goal_id', async (req, res) => {
+    
+    try {
+    const { goal_id } = req.params;
+
+    if (!goal_id) {
+        res.status(400).json({message: "You must sepcify a goal"});
+    }
+    const result = await pool.query(
+        "SELECT * FROM goaltracker.goals WHERE goal_id = $1 RETURNING *",
+        [goal_id]
+    );
+
+    if (result.rows.length === 0) {
+        res.status(400).json({message: "The Goal is empty"})
+    }
+    const goal = result.rows;
+    res.status(200).json(goal);
+
+    } catch {
+        res.status(500).json({message: "Caught the scribes napping"});
+    }
+});
+
 
 
 //TASK INTERACT APIs
@@ -199,6 +221,27 @@ app.post('/api/tasks/addtask/', async (req, res) => {
     }
 });
 
+//This was just a test ot make sure I was understanding how to build a thing, plz ignore.
+app.get("/api/tasks/gettasks", async (req, res) => {
+    try {
+        const { switchOn } = req.query;
+        let query = "";
+
+        if (switchOn === 'on'){
+            query = "SELECT * FROM goaltracker.goals"
+        } else {
+            query = "SELECT * FROM goaltracker.tasks"
+        }
+
+        const result = await pool.query(query);
+
+        res.status(200).json(result)
+    } catch (error) {
+        console.error("It appears we have erred", error);
+        res.status(500).json({message: "Looks like we fucked up."})
+    }
+});
+
 app.put("/api/tasks/modify", async (req, res) => {
     console.log("not built yet")
 })
@@ -206,4 +249,9 @@ app.put("/api/tasks/modify", async (req, res) => {
 //LISTENING POSTS
 app.listen(port, () => {
     console.log(`Winter Arc is Go on ${port}`);
+});
+
+//CRON JOBS
+cron.schedule('0 0 * * * *', async () =>{
+    console.log('Running cron job test')
 });
