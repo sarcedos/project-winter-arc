@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { onMount } from "svelte";
+    import { TaskForm } from "$lib/TaskForm.svelte"
 
     $: goal_id = $page.params.goal_id;
 
@@ -8,6 +9,8 @@
     let tasks: any[] = [];
     let loading = true;
     let error = "";
+    let showtaskform = $staet(false);
+
 
     onMount(async () => {
         await loadGoalTasks();
@@ -85,8 +88,14 @@
                     {/each}
                 </ul>
             {/if}
-            <button class="add-task">+ Add Task</button>
+            <button class="add-task" onclick={()=> showtaskform=true}>+ Add Task</button>
         </section>
     </main>
-{/if} 
+ 
     
+    <TaskForm
+    goal_id={paresInt(goal_id)}
+    bind:show={showtaskform}
+    ontaskAdded={loadGoalData}
+    />
+{/if}

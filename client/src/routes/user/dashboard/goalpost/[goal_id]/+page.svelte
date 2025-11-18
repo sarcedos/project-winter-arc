@@ -1,15 +1,16 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  
+  import { Taskform } from '$lib/TaskForm.svelte';  
   // Extract goalId from URL
-  $: goal_id = $page.params.goal_id;
+  let goal_id = $derived($page.params.goal_id);;
   
   let test: any = null;
   let goal: any = null;
   let tasks: any[] = [];
   let loading = true;
   let error = '';
+  let showtaskform = $state(false);
   
   onMount(async () => {
     await loadGoalData();
@@ -83,11 +84,11 @@
         <ul class="task-list">
           {#each tasks as task}
             <li class:completed={task.completed}>
-              <input 
+              <!-- <input 
                 type="checkbox" 
                 checked={task.completed}
                 on:change={() => toggleTaskComplete(task.id, task.completed)}
-              />
+              /> -->
               <div class="task-info">
                 <span class="task-title">{task.title}</span>
                 {#if task.due_date}
@@ -102,9 +103,15 @@
         </ul>
       {/if}
       
-      <button class="add-task">+ Add Task</button>
+      <button class="add-task" onclick={()=> showtaskform=true}>+ Add Task</button>
     </section>
   </main>
+
+      <TaskForm
+    goal_id={paresInt(goal_id)}
+    bind:show={showtaskform}
+    ontaskAdded={loadGoalData}
+    />
 {/if}
 
 <style>
